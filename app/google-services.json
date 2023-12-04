@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627853091770",
+    "project_id": "trackevents-44677",
+    "storage_bucket": "trackevents-44677.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627853091770:android:20454a50c7486d2778b383",
+        "android_client_info": {
+          "package_name": "com.example.kursacho"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFu3pJ2O9zugYh4wWTADS-voO_vTfr2a8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
