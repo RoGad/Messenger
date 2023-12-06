@@ -17,8 +17,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kursacho.Screens.ChatListScreen
 import com.example.kursacho.Screens.LoginScreen
+import com.example.kursacho.Screens.ProfileScreen
 import com.example.kursacho.Screens.SignUpScreen
+import com.example.kursacho.Screens.StatusScreen
 import com.example.kursacho.ui.theme.KursachoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -97,7 +100,16 @@ class MainActivity : ComponentActivity() {
                 SignUpScreen(navController, vm)
             }
             composable(DestinationScreen.Login.route){
-                LoginScreen()
+                LoginScreen(navController = navController, vm = vm)
+            }
+            composable(DestinationScreen.ChatList.route){
+                ChatListScreen()
+            }
+            composable(DestinationScreen.StatusList.route){
+                StatusScreen()
+            }
+            composable(DestinationScreen.Profile.route){
+                ProfileScreen()
             }
         }
     }

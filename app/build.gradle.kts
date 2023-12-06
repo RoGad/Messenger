@@ -86,8 +86,9 @@ dependencies {
 
     val nav_version = "2.7.2"
 
+    //noinspection GradleDependency
     implementation("androidx.navigation:navigation-compose:$nav_version")
-
+    implementation("androidx.autofill:autofill:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
 }

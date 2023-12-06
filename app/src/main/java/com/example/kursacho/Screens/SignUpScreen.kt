@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +27,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.kursacho.CheckSignedIn
 import com.example.kursacho.CommonProgressBar
 import com.example.kursacho.DestinationScreen
 import com.example.kursacho.LCViewModel
@@ -44,6 +48,8 @@ import com.example.kursacho.navigateTo
 fun SignUpScreen(
     navController: NavController, vm: LCViewModel
 ) {
+    CheckSignedIn(vm = vm, navController = navController)
+
     Box(modifier = Modifier.fillMaxSize()){
         Column(modifier = Modifier
             .fillMaxSize()
@@ -52,6 +58,7 @@ fun SignUpScreen(
                 rememberScrollState()
             ),
             horizontalAlignment = Alignment.CenterHorizontally
+            
         ){
             val nameState = remember{
                 mutableStateOf(TextFieldValue())
@@ -76,6 +83,10 @@ fun SignUpScreen(
             )
             OutlinedTextField(
                 value = nameState.value,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(R.color.light_green),
+                    unfocusedBorderColor = colorResource(R.color.light_gray)
+                ),
                 onValueChange = {
                 nameState.value=it
             },
@@ -90,6 +101,11 @@ fun SignUpScreen(
             )
             OutlinedTextField(
                 value = numberState.value,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(R.color.light_green),
+                    unfocusedBorderColor = colorResource(R.color.light_gray)
+                ),
                 onValueChange = {
                     numberState.value=it
                 },
@@ -104,6 +120,11 @@ fun SignUpScreen(
             )
             OutlinedTextField(
                 value = emailState.value,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(R.color.light_green),
+                    unfocusedBorderColor = colorResource(R.color.light_gray)
+                ),
                 onValueChange = {
                     emailState.value=it
                 },
@@ -118,6 +139,10 @@ fun SignUpScreen(
             )
             OutlinedTextField(
                 value = passwordState.value,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = colorResource(R.color.light_green),
+                    unfocusedBorderColor = colorResource(R.color.light_gray)
+                ),
                 onValueChange = {
                     passwordState.value=it
                 },
@@ -131,10 +156,10 @@ fun SignUpScreen(
 
             )
             Button(onClick = {vm.signUp(
-                nameState.value.text,
-                numberState.value.text,
-                emailState.value.text,
-                passwordState.value.text,
+                name = nameState.value.text,
+                number = numberState.value.text,
+                email = emailState.value.text,
+                password = passwordState.value.text,
             ) },
                 modifier = Modifier
                     .padding(8.dp)
@@ -158,4 +183,5 @@ fun SignUpScreen(
         CommonProgressBar()
     }
 }
+
 

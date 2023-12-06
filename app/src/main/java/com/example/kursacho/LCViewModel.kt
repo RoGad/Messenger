@@ -17,24 +17,66 @@ class LCViewModel @Inject constructor(
     var db: FirebaseFirestore
 
 ): ViewModel() {
-    init {
-
-    }
     var inProcess = mutableStateOf(false)
     val eventMutableState = mutableStateOf<Event<String>?>(null)
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+    init {
+
+        val currentUser = auth.currentUser
+        signIn.value = currentUser != null
+        currentUser?.uid?.let{
+            getUserData(it)
+        }
+
+    }
+
     fun signUp(name:String, number: String, email: String, password: String){
         inProcess.value = true
-        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
-            if (it.isSuccessful){
-                signIn.value = true
-                createOrUpdateProfile(name, number)
-                Log.d("TAG", "signUp: User Logger")
-            } else {
-                handleException(it.exception, customMessage = "SignUp failed")
+        if(name.isEmpty() or number.isEmpty() or email.isEmpty() or password.isEmpty()){
+            handleException(customMessage = "Пожалуйста, заполните все поля")
+            return
+        }
+        inProcess.value = true
+        db.collection(USER_NODE).whereEqualTo("number", number).get().addOnSuccessListener {
 
+            if(it.isEmpty){
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{
+                    if (it.isSuccessful){
+                        signIn.value = true
+                        createOrUpdateProfile(name, number)
+                        Log.d("TAG", "signUp: User Logger")
+                    } else {
+                        handleException(it.exception, customMessage = "SignUp failed")
+
+                    }
+                }
+            } else {
+                handleException(customMessage = "Такой номер уже существует")
+                inProcess.value = false
             }
+        }
+
+    }
+
+    fun loginIn(email: String, password: String){
+        if(email.isEmpty() or password.isEmpty()){
+            handleException(customMessage = "Пожалуйста, заполните все поля")
+            return
+        } else {
+            inProcess.value = true
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        signIn.value = true
+                        inProcess.value = false
+                        auth.currentUser?.uid?.let {
+                            getUserData(it)
+                        }
+                    } else {
+                        handleException(exception = it.exception, customMessage = "Неправильный логин или пароль")
+                    }
+                }
         }
     }
 
@@ -95,6 +137,5 @@ class LCViewModel @Inject constructor(
 
 
     }
-
 
 }
