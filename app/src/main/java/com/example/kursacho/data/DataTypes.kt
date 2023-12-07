@@ -13,5 +13,4 @@ data class UserData(
         "number" to number,
         "imageUrl" to imageUrl,
     )
-
 }

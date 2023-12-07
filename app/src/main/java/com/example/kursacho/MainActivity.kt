@@ -43,15 +43,9 @@ sealed class DestinationScreen(var route: String){
 }
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-//    private val viewModel by viewModels<MainViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-//            setKeepOnScreenCondition{
-//                !viewModel.isReady.value
-//            }
             setOnExitAnimationListener { screen ->
                 val zoomX = ObjectAnimator.ofFloat(
                     screen.iconView,
@@ -103,13 +97,13 @@ class MainActivity : ComponentActivity() {
                 LoginScreen(navController = navController, vm = vm)
             }
             composable(DestinationScreen.ChatList.route){
-                ChatListScreen()
+                ChatListScreen(navController = navController, vm = vm)
             }
             composable(DestinationScreen.StatusList.route){
-                StatusScreen()
+                StatusScreen(navController = navController, vm = vm)
             }
             composable(DestinationScreen.Profile.route){
-                ProfileScreen()
+                ProfileScreen(navController = navController, vm = vm)
             }
         }
     }
