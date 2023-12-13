@@ -22,6 +22,7 @@ import com.example.kursacho.Screens.LoginScreen
 import com.example.kursacho.Screens.ProfileScreen
 import com.example.kursacho.Screens.SignUpScreen
 import com.example.kursacho.Screens.SingleChatScreen
+import com.example.kursacho.Screens.SingleStatusScreen
 import com.example.kursacho.Screens.StatusScreen
 import com.example.kursacho.ui.theme.KursachoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,6 +113,14 @@ class MainActivity : ComponentActivity() {
             composable(DestinationScreen.Profile.route){
                 ProfileScreen(navController = navController, vm = vm)
             }
+            composable(DestinationScreen.SingleStatus.route){
+                val userId = it.arguments?.getString("userId")
+                userId?.let{
+                    SingleStatusScreen(navController = navController, vm = vm, userId = it)
+                }
+
+            }
+
         }
     }
 }

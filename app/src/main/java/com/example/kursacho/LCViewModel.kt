@@ -10,11 +10,14 @@ import com.example.kursacho.data.ChatData
 import com.example.kursacho.data.ChatUser
 import com.example.kursacho.data.MESSAGE
 import com.example.kursacho.data.Message
+import com.example.kursacho.data.STATUS
+import com.example.kursacho.data.Status
 import com.example.kursacho.data.USER_NODE
 import com.example.kursacho.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
@@ -36,6 +39,12 @@ class LCViewModel @Inject constructor(
     var signIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val chats = mutableStateOf<List<ChatData>>(listOf())
+    val chatMessages = mutableStateOf<List<Message>>(listOf())
+    val inProgressChatMessage = mutableStateOf(false)
+    var currentChatMessageListener: ListenerRegistration? = null
+
+    val status = mutableStateOf<List<Status>>(listOf())
+    val inProgressStatus = mutableStateOf(false)
 
     init {
         val currentUser = auth.currentUser
@@ -46,19 +55,38 @@ class LCViewModel @Inject constructor(
 
     }
 
-    fun populateChats(){
+    fun populateMessages(chatId: String) {
+        inProgressChatMessage.value = true
+        currentChatMessageListener = db.collection(CHATS).document(chatId).collection(MESSAGE)
+            .addSnapshotListener { value, error ->
+                if (error!=null){
+                    handleException(error)
+                }
+                if (value!=null){
+                    chatMessages.value = value.documents.mapNotNull {
+                        it.toObject<Message>()
+                    }.sortedBy { it.timestamp }
+                    inProgressChatMessage.value = false
+                }
+            }
+    }
+
+    fun depopulateMessage(){
+        chatMessages.value
+    }
+
+    fun populateChats() {
         inProcessChats.value = true
         db.collection(CHATS).where(
             Filter.or(
                 Filter.equalTo("user1.userId", userData.value?.userId),
                 Filter.equalTo("user2.userId", userData.value?.userId),
             )
-        ).addSnapshotListener{
-            value, error ->
-            if (error != null){
+        ).addSnapshotListener { value, error ->
+            if (error != null) {
                 handleException(error)
             }
-            if (value != null){
+            if (value != null) {
                 chats.value = value.documents.mapNotNull {
                     it.toObject<ChatData>()
                 }
@@ -66,11 +94,13 @@ class LCViewModel @Inject constructor(
             }
         }
     }
-    fun onSendReply(chatId: String, message: String){
+
+    fun onSendReply(chatId: String, message: String) {
         val time = Calendar.getInstance().time.toString()
         val msg = Message(userData.value?.userId, message, time)
         db.collection(CHATS).document(chatId).collection(MESSAGE).document().set(msg)
     }
+
     fun signUp(name: String, number: String, email: String, password: String) {
         inProcess.value = true
         if (name.isEmpty() or number.isEmpty() or email.isEmpty() or password.isEmpty()) {
@@ -192,6 +222,7 @@ class LCViewModel @Inject constructor(
                 userData.value = user
                 inProcess.value = false
                 populateChats()
+                populateStatuses()
             }
         }
     }
@@ -208,10 +239,12 @@ class LCViewModel @Inject constructor(
 
     }
 
-    fun logout(){
+    fun logout() {
         auth.signOut()
         signIn.value = false
         userData.value = null
+        depopulateMessage()
+        currentChatMessageListener = null
         eventMutableState.value = Event("Logged Out")
     }
 
@@ -259,12 +292,74 @@ class LCViewModel @Inject constructor(
                                 db.collection(CHATS).document(id).set(chat)
                             }
                         }
-                        .addOnFailureListener{
+                        .addOnFailureListener {
                             handleException(it)
                         }
 
                 } else {
                     handleException(customMessage = "Chat already exists")
+                }
+            }
+        }
+    }
+
+    fun uploadStatus(uri: Uri) {
+        uploadImage(uri){
+            createStatus(it.toString())
+
+        }
+    }
+    fun createStatus(imageurl: String){
+        val newStatus = Status(
+            ChatUser(
+              userData.value?.userId,
+              userData.value?.name,
+              userData.value?.imageUrl,
+              userData.value?.number,
+            ),
+            imageurl,
+            System.currentTimeMillis()
+        )
+        db.collection(STATUS).document().set(newStatus)
+    }
+
+    fun populateStatuses(){
+        val timeDelta = 24L * 60 * 60 * 1000
+        val cutOff = System.currentTimeMillis() - timeDelta
+        inProgressStatus.value = true
+        db.collection(CHATS).where(
+            Filter.or(
+                Filter.equalTo("user1.userId", userData.value?.userId),
+                Filter.equalTo("user2.userId", userData.value?.userId),
+            )
+        ).addSnapshotListener{
+            value, error ->
+            if(error!=null)
+                handleException(error)
+
+            if(value!=null){
+                val currentConnections = arrayListOf(userData.value?.userId)
+
+                val chats = value.toObjects<ChatData>()
+                chats.forEach {
+                    chat ->
+                    if(chat.user1.userId == userData.value?.userId){
+                        currentConnections.add(chat.user2.userId)
+                    }
+                    else
+                        currentConnections.add(chat.user1.userId)
+                }
+                db.collection(STATUS).whereGreaterThan("timestamp", cutOff).whereIn("user.userId", currentConnections).addSnapshotListener{ value, error ->
+                    if (error!=null){
+                        handleException(error)
+                    }
+                    if (value!=null){
+                        status.value = value.toObjects()
+                        inProgressStatus.value = false
+                    }
+
+
+
                 }
             }
         }

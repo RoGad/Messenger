@@ -84,9 +84,10 @@ fun ChatListScreen(navController: NavController, vm: LCViewModel) {
                         }
                     } else {
                         LazyColumn(modifier = Modifier.weight(1f)) {
-                            items(chats) { chat ->
-                                val chatUser = if (chat.user1.userId == userData?.userId) {
-                                    chat.user2
+                            items(chats) {
+                                    chat ->
+                                    val chatUser = if (chat.user1.userId == userData?.userId) {
+                                        chat.user2
                                 } else {
                                     chat.user1
                                 }

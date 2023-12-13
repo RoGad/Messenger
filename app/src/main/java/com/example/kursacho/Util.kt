@@ -121,7 +121,7 @@ fun CommonRow(imageUrl: String?, name: String?, onItemClick: () -> Unit) {
                 .size(50.dp)
                 .clip(CircleShape)
                 .background(
-                    colorResource(R.color.light_green)
+                    Color.Red
                 )
         )
         Text(
