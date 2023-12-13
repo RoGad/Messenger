@@ -51,7 +51,7 @@ fun ProfileScreen(navController: NavController, vm: LCViewModel) {
         var number by rememberSaveable {
             mutableStateOf(userData?.number?:"")
         }
-        Column {
+        Column() {
             ProfileContent(
                 modifier = Modifier
                     .weight(1f)
@@ -70,7 +70,10 @@ fun ProfileScreen(navController: NavController, vm: LCViewModel) {
                 onBack = {
                          navigateTo(navController = navController, route = DestinationScreen.ChatList.route)
                 },
-                onLogout = {}
+                onLogout = {
+                    vm.logout()
+                    navigateTo(navController = navController, route = DestinationScreen.Login.route)
+                }
             )
             BottomNavigationMenu(selectedItem = BottomNavigationItem.PROFILELIST, navController = navController)
         }
@@ -91,7 +94,7 @@ fun ProfileContent(
     onLogout: ()->Unit,
 ){
     val imageUrl = vm.userData.value?.imageUrl
-    Column {
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -142,9 +145,7 @@ fun ProfileContent(
                 .fillMaxWidth()
                 .padding(16.dp),
                 horizontalArrangement = Arrangement.Center) {
-                Text(text = "LogOut", modifier = Modifier.clickable {
-                    onLogout.invoke()
-                })
+                Text(text = "LogOut", modifier = Modifier.clickable { onLogout.invoke() })
             }
 
     }

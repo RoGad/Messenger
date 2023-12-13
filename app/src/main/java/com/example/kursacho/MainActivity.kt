@@ -21,6 +21,7 @@ import com.example.kursacho.Screens.ChatListScreen
 import com.example.kursacho.Screens.LoginScreen
 import com.example.kursacho.Screens.ProfileScreen
 import com.example.kursacho.Screens.SignUpScreen
+import com.example.kursacho.Screens.SingleChatScreen
 import com.example.kursacho.Screens.StatusScreen
 import com.example.kursacho.ui.theme.KursachoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -98,6 +99,12 @@ class MainActivity : ComponentActivity() {
             }
             composable(DestinationScreen.ChatList.route){
                 ChatListScreen(navController = navController, vm = vm)
+            }
+            composable(DestinationScreen.SingleChat.route){
+                val chatId = it.arguments?.getString("chatId")
+                chatId.let{
+                    SingleChatScreen()
+                }
             }
             composable(DestinationScreen.StatusList.route){
                 StatusScreen(navController = navController, vm = vm)

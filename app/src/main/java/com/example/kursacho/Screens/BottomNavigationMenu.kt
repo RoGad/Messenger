@@ -1,8 +1,6 @@
 package com.example.kursacho.Screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,10 +34,6 @@ fun BottomNavigationMenu(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 4.dp)
-            .background(colorResource(R.color.bottom_gray))
-            .border(2.dp, colorResource(R.color.border_gray))
-
-
     ){
         for(item in BottomNavigationItem.values()){
             Image(painter = painterResource(id = item.icon), contentDescription = null,
