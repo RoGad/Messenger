@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import com.example.kursacho.data.CHATS
 import com.example.kursacho.data.ChatData
 import com.example.kursacho.data.ChatUser
+import com.example.kursacho.data.MESSAGE
+import com.example.kursacho.data.Message
 import com.example.kursacho.data.USER_NODE
 import com.example.kursacho.data.UserData
 import com.google.firebase.auth.FirebaseAuth
@@ -17,6 +19,7 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Calendar
 import java.util.UUID
 import javax.inject.Inject
 
@@ -62,6 +65,11 @@ class LCViewModel @Inject constructor(
                 inProcessChats.value = false
             }
         }
+    }
+    fun onSendReply(chatId: String, message: String){
+        val time = Calendar.getInstance().time.toString()
+        val msg = Message(userData.value?.userId, message, time)
+        db.collection(CHATS).document(chatId).collection(MESSAGE).document().set(msg)
     }
     fun signUp(name: String, number: String, email: String, password: String) {
         inProcess.value = true

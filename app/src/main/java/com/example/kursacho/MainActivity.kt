@@ -102,8 +102,8 @@ class MainActivity : ComponentActivity() {
             }
             composable(DestinationScreen.SingleChat.route){
                 val chatId = it.arguments?.getString("chatId")
-                chatId.let{
-                    SingleChatScreen()
+                chatId?.let{
+                    SingleChatScreen(navController = navController, vm = vm, chatId = chatId)
                 }
             }
             composable(DestinationScreen.StatusList.route){
