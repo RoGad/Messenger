@@ -1,4 +1,4 @@
-##МиниСоцСеть
+
 <img width="241" alt="чатинг" src="https://github.com/RoGad/kursach/assets/83944231/fafbc342-cc02-434c-bae2-25d56ff87b2d">
 <img width="142" alt="вход" src="https://github.com/RoGad/kursach/assets/83944231/893078a6-f889-449a-8a20-06a452e4a604">
 <img width="240" alt="статус" src="https://github.com/RoGad/kursach/assets/83944231/e4eab8ed-50c7-49b0-8826-4960b2f00edc">
